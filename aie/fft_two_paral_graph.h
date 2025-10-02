@@ -19,15 +19,39 @@ private:
                                                      1  // TP_USE_WIDGETS
                                                      >
       fft_kernel;
+  //   kernel splitter, combiner;
 
 public:
-  adf::input_gmio fft_two_paral_in;
-  adf::output_gmio fft_two_paral_out;
+  //   adf::input_gmio fft_in;
+  //   adf::output_gmio fft_out;
+  adf::input_plio fft_in_0, fft_in_1;
+  adf::output_plio fft_out_0, fft_out_1;
   FftTwoParalGraph() {
-    fft_two_paral_in = adf::input_gmio::create("fft_two_paral_in", 64, 1000);
-    fft_two_paral_out = adf::output_gmio::create("fft_two_paral_out", 64, 1000);
-    adf::connect<>(fft_two_paral_in.out[0], fft_kernel.in[0]);
-    adf::connect<>(fft_kernel.out[0], fft_two_paral_out.in[0]);
+    // fft_in = adf::input_gmio::create("fft_in", 64, 50000);
+    // fft_out = adf::output_gmio::create("fft_out", 64, 50000);
+    fft_in_0 = input_plio::create("fft_in_0", adf::plio_64_bits);
+    fft_in_1 = input_plio::create("fft_in_1", adf::plio_64_bits);
+    fft_out_0 = output_plio::create("fft_out_0", adf::plio_64_bits);
+    fft_out_1 = output_plio::create("fft_out_1", adf::plio_64_bits);
+
+    // splitter = kernel::create(widget_splitter);
+    // source(splitter) = "./widget_splitter.cpp";
+    // runtime<ratio>(splitter) = 0.8;
+    // combiner = kernel::create(widget_combiner);
+    // source(combiner) = "./widget_combiner.cpp";
+    // runtime<ratio>(combiner) = 0.8;
+
+    // adf::connect<>(fft_in.out[0], splitter.in[0]);
+    // adf::connect<>(splitter.out[0], fft_kernel.in[0]);
+    // adf::connect<>(splitter.out[1], fft_kernel.in[1]);
+    // adf::connect<>(fft_kernel.out[0], combiner.in[0]);
+    // adf::connect<>(fft_kernel.out[1], combiner.in[1]);
+    // adf::connect<>(combiner.out[0], fft_out.in[0]);
+
+    adf::connect<>(fft_in_0.out[0], fft_kernel.in[0]);
+    adf::connect<>(fft_in_1.out[0], fft_kernel.in[1]);
+    adf::connect<>(fft_kernel.out[0], fft_out_0.in[0]);
+    adf::connect<>(fft_kernel.out[1], fft_out_1.in[0]);
   }
 };
 

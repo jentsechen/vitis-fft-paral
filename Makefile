@@ -13,6 +13,8 @@ HOST_EXE=host.exe
 
 GRAPH=aie/graph.cpp
 LIBADF=libadf.a
+MM2S = ./hls/mm2s/mm2s.xo
+S2MM = ./hls/s2mm/s2mm.xo
 HOST=host.exe
 
 SYS_CFG=system.cfg
@@ -31,8 +33,11 @@ xsa: ${XSA}
 host: ${HOST}
 package: package_${TARGET}
 
-${XSA}: ${LIBADF} ${SYS_CFG} 
-	v++ -g -l --platform ${PLATFORM} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
+hls: hls/*
+	make all -C hls
+
+${XSA}: ${MM2S} ${S2MM} ${LIBADF} ${SYS_CFG} 
+	v++ -g -l --platform ${PLATFORM} ${MM2S} ${S2MM} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
 
 ${HOST}: ${GRAPH} ./Work/ps/c_rts/aie_control_xrt.cpp ./host/host.cpp
 	$(MAKE) -C host/
@@ -45,3 +50,8 @@ package_${TARGET}: ${LIBADF} ${XSA} ${HOST}
 		--package.image_format=ext4 \
 		--package.defer_aie_run \
 		--package.sd_file ${HOST} ${XSA} ${LIBADF}
+
+clean:
+	rm -rf _x v++_* ${XOS} ${OS} ${LIBADF} *.o.* *.o *.xpe *.xo.* \
+	       *.xclbin* *.xsa *.log *.jou xnwOut Work Map_Report.csv \
+	       ilpProblem* sol.db drivers .Xil  aiesimu* x86simu*

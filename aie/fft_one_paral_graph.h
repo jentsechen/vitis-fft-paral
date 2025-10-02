@@ -21,13 +21,17 @@ private:
       fft_kernel;
 
 public:
-  adf::input_gmio fft_one_paral_in;
-  adf::output_gmio fft_one_paral_out;
+  //   adf::input_gmio fft_in;
+  //   adf::output_gmio fft_out;
+  adf::input_plio fft_in;
+  adf::output_plio fft_out;
   FftOneParalGraph() {
-    fft_one_paral_in = adf::input_gmio::create("fft_one_paral_in", 64, 1000);
-    fft_one_paral_out = adf::output_gmio::create("fft_one_paral_out", 64, 1000);
-    adf::connect<>(fft_one_paral_in.out[0], fft_kernel.in[0]);
-    adf::connect<>(fft_kernel.out[0], fft_one_paral_out.in[0]);
+    // fft_in = adf::input_gmio::create("fft_in", 64, 1000);
+    // fft_out = adf::output_gmio::create("fft_out", 64, 1000);
+    fft_in = input_plio::create("fft_in", adf::plio_64_bits);
+    fft_out = output_plio::create("fft_out", adf::plio_64_bits);
+    adf::connect<>(fft_in.out[0], fft_kernel.in[0]);
+    adf::connect<>(fft_kernel.out[0], fft_out.in[0]);
   }
 };
 
