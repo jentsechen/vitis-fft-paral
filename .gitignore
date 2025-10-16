@@ -28,3 +28,7 @@ hls/s2mm/
 host/cnpy/
 host/aie_control_xrt.*
 *.o
+
+verify/*.html
+verify/data_rx_1024_complex_64.npy
+verify/output.npy
