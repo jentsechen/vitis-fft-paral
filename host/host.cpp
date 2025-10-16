@@ -5,6 +5,7 @@
 #include "xrt/xrt_kernel.h"
 #include <chrono>
 #include <complex>
+#define N_PARAL 1
 
 const size_t n_iter = 1024;
 const size_t n_byte_per_sample = 8;
@@ -23,20 +24,21 @@ int main(int argc, char **argv) {
   auto uuid = device.load_xclbin(xclbinFilename);
 
   auto fft_graph_rhdl = xrt::graph(device, uuid, "fft_graph");
-  //   //   auto in_buf =
-  //   //       xrt::aie::bo(device, block_size_in_byte, xrt::bo::flags::normal,
-  //   0); auto in_buf = xrt::bo(device, block_size_in_byte,
-  //   xrt::bo::flags::normal, 0); auto *in_arr = in_buf.map<std::complex<float>
-  //   *>(); memset(in_arr, 0, block_size_in_byte); memcpy(in_arr, data_in,
-  //          std::min(arr.shape[1] * n_byte_per_sample, block_size_in_byte));
-  //   //   auto out_buf =
-  //   //       xrt::aie::bo(device, block_size_in_byte, xrt::bo::flags::normal,
-  //   0); auto out_buf = xrt::bo(device, block_size_in_byte,
-  //   xrt::bo::flags::normal, 0); auto *out_arr =
-  //   out_buf.map<std::complex<float> *>(); auto mm2s = xrt::kernel(device,
-  //   uuid, "mm2s:{mm2s_0}"); auto s2mm = xrt::kernel(device, uuid,
-  //   "s2mm:{s2mm_0}");
-
+#if N_PARAL == 1
+  //   auto in_buf =
+  //       xrt::aie::bo(device, block_size_in_byte, xrt::bo::flags::normal, 0);
+  auto in_buf = xrt::bo(device, block_size_in_byte, xrt::bo::flags::normal, 0);
+  auto *in_arr = in_buf.map<std::complex<float> *>();
+  memset(in_arr, 0, block_size_in_byte);
+  memcpy(in_arr, data_in,
+         std::min(arr.shape[1] * n_byte_per_sample, block_size_in_byte));
+  //   auto out_buf =
+  //       xrt::aie::bo(device, block_size_in_byte, xrt::bo::flags::normal, 0);
+  auto out_buf = xrt::bo(device, block_size_in_byte, xrt::bo::flags::normal, 0);
+  auto *out_arr = out_buf.map<std::complex<float> *>();
+  auto mm2s = xrt::kernel(device, uuid, "mm2s:{mm2s_0}");
+  auto s2mm = xrt::kernel(device, uuid, "s2mm:{s2mm_0}");
+#elif N_PARAL == 2
   auto in_buf_0 =
       xrt::bo(device, block_size_in_byte / 2, xrt::bo::flags::normal, 0);
   auto in_buf_1 =
@@ -65,8 +67,10 @@ int main(int argc, char **argv) {
   auto mm2s_1 = xrt::kernel(device, uuid, "mm2s:{mm2s_1}");
   auto s2mm_0 = xrt::kernel(device, uuid, "s2mm:{s2mm_0}");
   auto s2mm_1 = xrt::kernel(device, uuid, "s2mm:{s2mm_1}");
+#endif
 
   auto start = std::chrono::high_resolution_clock::now();
+#if N_PARAL == 1
   //   int offset = 0;
   //   for (int iter = 0; iter < n_iter; ++iter) {
   //     std::cout << "iter: " << iter << std::endl;
@@ -81,19 +85,20 @@ int main(int argc, char **argv) {
   //     out_buf_run.wait();
   //     offset += (n_sample_per_iter * n_byte_per_sample);
   //   }
-  //   in_buf.sync(XCL_BO_SYNC_BO_TO_DEVICE);
-  //   for (int iter = 0; iter < n_iter; ++iter) {
-  //     auto mm2s_rhdl = mm2s(in_buf, iter);
-  //     auto s2mm_rhdl = s2mm(out_buf, iter);
-  //     fft_graph_rhdl.run(1);
-  //     mm2s_rhdl.wait();
-  //     s2mm_rhdl.wait();
-  //     fft_graph_rhdl.wait();
-  //   }
-  //   out_buf.sync(XCL_BO_SYNC_BO_FROM_DEVICE);
+  in_buf.sync(XCL_BO_SYNC_BO_TO_DEVICE);
+  for (int iter = 0; iter < n_iter / 4; ++iter) {
+    auto mm2s_rhdl = mm2s(in_buf, iter);
+    auto s2mm_rhdl = s2mm(out_buf, iter);
+    fft_graph_rhdl.run(1);
+    mm2s_rhdl.wait();
+    s2mm_rhdl.wait();
+    fft_graph_rhdl.wait();
+  }
+  out_buf.sync(XCL_BO_SYNC_BO_FROM_DEVICE);
+#elif N_PARAL == 2
   in_buf_0.sync(XCL_BO_SYNC_BO_TO_DEVICE);
   in_buf_1.sync(XCL_BO_SYNC_BO_TO_DEVICE);
-  for (int iter = 0; iter < n_iter / 2; ++iter) {
+  for (int iter = 0; iter < n_iter / 4; ++iter) {
     auto mm2s_0_rhdl = mm2s_0(in_buf_0, iter);
     auto mm2s_1_rhdl = mm2s_1(in_buf_1, iter);
     auto s2mm_0_rhdl = s2mm_0(out_buf_0, iter);
@@ -107,6 +112,7 @@ int main(int argc, char **argv) {
   }
   out_buf_0.sync(XCL_BO_SYNC_BO_FROM_DEVICE);
   out_buf_1.sync(XCL_BO_SYNC_BO_FROM_DEVICE);
+#endif
   fft_graph_rhdl.end();
   auto end = std::chrono::high_resolution_clock::now();
   std::cout << "time requirement: "
@@ -115,15 +121,18 @@ int main(int argc, char **argv) {
                    .count()
             << " us" << std::endl;
 
-  //   std::vector<std::complex<float>> output(
-  //       reinterpret_cast<std::complex<float> *>(out_arr),
-  //       reinterpret_cast<std::complex<float> *>(out_arr) +
-  //           n_iter * n_sample_per_iter);
+#if N_PARAL == 1
+  std::vector<std::complex<float>> output(
+      reinterpret_cast<std::complex<float> *>(out_arr),
+      reinterpret_cast<std::complex<float> *>(out_arr) +
+          n_iter * n_sample_per_iter);
+#elif N_PARAL == 2
   std::vector<std::complex<float>> output(n_iter * n_sample_per_iter);
   for (int i = 0; i < n_iter * n_sample_per_iter / 2; i++) {
     output[2 * i] = out_arr_0[i];
     output[2 * i + 1] = out_arr_1[i];
   }
+#endif
   cnpy::npy_save("output.npy", output.data(), {n_iter * n_sample_per_iter},
                  "w");
 

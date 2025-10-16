@@ -34,20 +34,6 @@ public:
     fft_out_0 = output_plio::create("fft_out_0", adf::plio_64_bits);
     fft_out_1 = output_plio::create("fft_out_1", adf::plio_64_bits);
 
-    // splitter = kernel::create(widget_splitter);
-    // source(splitter) = "./widget_splitter.cpp";
-    // runtime<ratio>(splitter) = 0.8;
-    // combiner = kernel::create(widget_combiner);
-    // source(combiner) = "./widget_combiner.cpp";
-    // runtime<ratio>(combiner) = 0.8;
-
-    // adf::connect<>(fft_in.out[0], splitter.in[0]);
-    // adf::connect<>(splitter.out[0], fft_kernel.in[0]);
-    // adf::connect<>(splitter.out[1], fft_kernel.in[1]);
-    // adf::connect<>(fft_kernel.out[0], combiner.in[0]);
-    // adf::connect<>(fft_kernel.out[1], combiner.in[1]);
-    // adf::connect<>(combiner.out[0], fft_out.in[0]);
-
     adf::connect<>(fft_in_0.out[0], fft_kernel.in[0]);
     adf::connect<>(fft_in_1.out[0], fft_kernel.in[1]);
     adf::connect<>(fft_kernel.out[0], fft_out_0.in[0]);

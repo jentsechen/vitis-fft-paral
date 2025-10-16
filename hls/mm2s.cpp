@@ -2,8 +2,8 @@
 #include <ap_int.h>
 #include <hls_stream.h>
 #define SAMPLE_BIT_WIDTH 64
-#define FFT_SIZE 1024
-#define N_PARAL 2
+#define FFT_SIZE 1024 * 4
+#define N_PARAL 1
 
 extern "C" {
 void mm2s(ap_int<SAMPLE_BIT_WIDTH> *mem, int index,
