@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
   //     offset += (n_sample_per_iter * n_byte_per_sample);
   //   }
   in_buf.sync(XCL_BO_SYNC_BO_TO_DEVICE);
-  for (int iter = 0; iter < n_iter / 4; ++iter) {
+  for (int iter = 0; iter < n_iter / 8; ++iter) {
     auto mm2s_rhdl = mm2s(in_buf, iter);
     auto s2mm_rhdl = s2mm(out_buf, iter);
     fft_graph_rhdl.run(1);

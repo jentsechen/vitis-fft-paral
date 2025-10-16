@@ -1,5 +1,5 @@
-#ifndef __fft_one_paral_graph__
-#define __fft_one_paral_graph__
+#ifndef __fft_one_paral_dist_graph__
+#define __fft_one_paral_dist_graph__
 
 #include "../../Vitis_Libraries/dsp/L2/include/aie/fft_ifft_dit_1ch_graph.hpp"
 #include "kernel.h"

@@ -1,5 +1,6 @@
 // #include "fft_one_paral_graph.h"
-#include "fft_one_paral_dist_graph.h"
+// #include "fft_one_paral_dist_graph.h"
+#include "fft_dist_window_graph.h"
 // #include "fft_one_paral_stream_graph.h"
 // #include "fft_two_paral_graph.h"
 #include <adf.h>
@@ -7,7 +8,8 @@
 using namespace adf;
 
 // FftOneParalGraph fft_graph;
- FftOneParalDistGraph fft_graph;
+// FftOneParalDistGraph fft_graph;
+FftDistWindowGraph fft_graph;
 // FftOneParalStreamGraph fft_graph;
 // FftTwoParalGraph fft_graph;
 

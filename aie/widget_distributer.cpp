@@ -1,8 +1,8 @@
 #include <adf.h>
 #include <aie_api/aie.hpp>
 
-void widget_distributer(input_stream<cfloat> *in, output_stream<cfloat>
-*out0, output_stream<cfloat> *out1) {
+void widget_distributer(input_stream<cfloat> *in, output_stream<cfloat> *out0,
+                        output_stream<cfloat> *out1) {
   for (int i = 0; i < 2048; i++) {
     writeincr(out0, readincr(in));
   }
@@ -10,3 +10,38 @@ void widget_distributer(input_stream<cfloat> *in, output_stream<cfloat>
     writeincr(out1, readincr(in));
   }
 }
+
+void widget_distributer_level0(input_stream<cfloat> *in,
+                               output_stream<cfloat> *out0,
+                               output_stream<cfloat> *out1) {
+  for (int i = 0; i < 4096; i++) {
+    writeincr(out0, readincr(in));
+  }
+  for (int i = 0; i < 4096; i++) {
+    writeincr(out1, readincr(in));
+  }
+}
+
+// void widget_distributer_window(
+//     input_stream<cfloat> *__restrict in,
+//     adf::output_buffer<cfloat, adf::extents<2048>> &__restrict out0,
+//     adf::output_buffer<cfloat, adf::extents<2048>> &__restrict out1,
+//     adf::output_buffer<cfloat, adf::extents<2048>> &__restrict out2,
+//     adf::output_buffer<cfloat, adf::extents<2048>> &__restrict out3) {
+//   cfloat *ptr0 = (cfloat *)aie::begin(out0);
+//   cfloat *ptr1 = (cfloat *)aie::begin(out1);
+//   cfloat *ptr2 = (cfloat *)aie::begin(out2);
+//   cfloat *ptr3 = (cfloat *)aie::begin(out3);
+//   for (int i = 0; i < 2048; i++) {
+//     ptr0[i] = readincr(in);
+//   }
+//   for (int i = 0; i < 2048; i++) {
+//     ptr1[i] = readincr(in);
+//   }
+//   for (int i = 0; i < 2048; i++) {
+//     ptr2[i] = readincr(in);
+//   }
+//   for (int i = 0; i < 2048; i++) {
+//     ptr3[i] = readincr(in);
+//   }
+// }
