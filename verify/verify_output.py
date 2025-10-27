@@ -28,5 +28,9 @@ if __name__ == "__main__":
     figure.add_trace(go.Scatter(y=result.imag), row=2, col=1)
     figure.add_trace(go.Scatter(y=golden.imag), row=2, col=1)
     figure.write_html("result.html")
+    for i in range(21):
+        result = output[i*fft_size:(i+1)*fft_size]
+        golden = np.fft.fft(input_zp[i*fft_size:(i+1)*fft_size])
+        print(sum(abs(result-golden)**2))
 
     print("DONE")

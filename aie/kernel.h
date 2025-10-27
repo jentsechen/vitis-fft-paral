@@ -2,6 +2,10 @@
 #define __kernel__
 #include <adf.h>
 #include <aie_api/aie.hpp>
+#include <aie_api/aie_adf.hpp>
+
+#define FFT_SIZE 1024
+#define N_BATCH_FFT 2
 
 void widget_distributer(input_stream<cfloat> *in, output_stream<cfloat> *out0,
                         output_stream<cfloat> *out1);
@@ -43,24 +47,12 @@ void widget_collector_level0(input_stream<cfloat> *in0,
 //                   output_stream<cfloat> *mv_out0,
 //                   output_stream<cfloat> *mv_out1);
 
-void wdt_dist_io_strm_lv2(input_stream<cfloat> *mv_in,
-                          output_stream<cfloat> *d_out0,
-                          output_stream<cfloat> *d_out1);
-void wdt_dist_io_strm_lv1(input_stream<cfloat> *mv_in,
-                          output_stream<cfloat> *mv_out,
-                          output_stream<cfloat> *d_out);
-void wdt_dist_io_strm_lv0(input_stream<cfloat> *mv_in,
-                          output_stream<cfloat> *mv_out,
-                          output_stream<cfloat> *d_out);
+template <unsigned int N_BATCH_MOVE>
+void wdt_dist_io_strm(input_stream<cfloat> *in, output_stream<cfloat> *out0,
+                      output_stream<cfloat> *out1);
 
-void wdt_coll_io_strm_lv2(input_stream<cfloat> *d_in0,
-                          input_stream<cfloat> *d_in1,
-                          output_stream<cfloat> *mv_out);
-void wdt_coll_io_strm_lv1(input_stream<cfloat> *mv_in,
-                          input_stream<cfloat> *d_in,
-                          output_stream<cfloat> *mv_out);
-void wdt_coll_io_strm_lv0(input_stream<cfloat> *mv_in,
-                          input_stream<cfloat> *d_in,
-                          output_stream<cfloat> *mv_out);
+template <unsigned int N_BATCH_MOVE>
+void wdt_coll_io_strm(input_stream<cfloat> *in0, input_stream<cfloat> *in1,
+                      output_stream<cfloat> *out);
 
 #endif

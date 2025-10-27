@@ -1,3 +1,4 @@
+#include "kernel.h"
 #include <adf.h>
 #include <aie_api/aie.hpp>
 
@@ -55,9 +56,10 @@ void widget_collector_level0(input_stream<cfloat> *in0,
 //   }
 // }
 
-// void wgt_coll_lv0(input_cascade<cfloat> *data_in, input_stream<cfloat> *mv_in0,
-//                   input_stream<cfloat> *mv_in1, output_stream<cfloat> *mv_out0,
-//                   output_stream<cfloat> *mv_out1) {
+// void wgt_coll_lv0(input_cascade<cfloat> *data_in, input_stream<cfloat>
+// *mv_in0,
+//                   input_stream<cfloat> *mv_in1, output_stream<cfloat>
+//                   *mv_out0, output_stream<cfloat> *mv_out1) {
 //   for (int i = 0; i < 1024; i++) {
 //     writeincr(mv_out0, readincr(data_in));
 //     writeincr(mv_out1, readincr(data_in));
@@ -68,33 +70,13 @@ void widget_collector_level0(input_stream<cfloat> *in0,
 //   }
 // }
 
-void wdt_coll_io_strm_lv2(input_stream<cfloat> *d_in0,
-                          input_stream<cfloat> *d_in1,
-                          output_stream<cfloat> *mv_out) {
-  for (int i = 0; i < 2048; i++) {
-    writeincr(mv_out, readincr(d_in0));
+template <unsigned int N_BATCH_MOVE>
+void wdt_coll_io_strm(input_stream<cfloat> *in0, input_stream<cfloat> *in1,
+                      output_stream<cfloat> *out) {
+  for (int i = 0; i < FFT_SIZE * N_BATCH_FFT; i++) {
+    writeincr(out, readincr(in1));
   }
-  for (int i = 0; i < 2048; i++) {
-    writeincr(mv_out, readincr(d_in1));
-  }
-}
-void wdt_coll_io_strm_lv1(input_stream<cfloat> *mv_in,
-                          input_stream<cfloat> *d_in,
-                          output_stream<cfloat> *mv_out) {
-  for (int i = 0; i < 2048; i++) {
-    writeincr(mv_out, readincr(d_in));
-  }
-  for (int i = 0; i < 4096; i++) {
-    writeincr(mv_out, readincr(mv_in));
-  }
-}
-void wdt_coll_io_strm_lv0(input_stream<cfloat> *mv_in,
-                          input_stream<cfloat> *d_in,
-                          output_stream<cfloat> *mv_out) {
-  for (int i = 0; i < 2048; i++) {
-    writeincr(mv_out, readincr(d_in));
-  }
-  for (int i = 0; i < 6144; i++) {
-    writeincr(mv_out, readincr(mv_in));
+  for (int i = 0; i < FFT_SIZE * N_BATCH_FFT * N_BATCH_MOVE; i++) {
+    writeincr(out, readincr(in0));
   }
 }

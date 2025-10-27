@@ -32,11 +32,12 @@ make package
 
 | 4 kernels |  |
 | :---: | :---: |
-| Time requirement: 17007 us | Time requirement:  us |
+| Time requirement: 15947 us | Time requirement:  us |
 | ![](./imp_result/dist_analysis/aie_util_4_kn_acc.png) |  |
 | ![](./imp_result/dist_analysis/graph_4_kn_acc.png) |  |
 | ![](./imp_result/dist_analysis/array_4_kn_acc.png) |  |
-* Time requirement of 4 kernels: (17712+17610+17870+17064+16587+16644+16618+16605+16633+16726)/10 = 17006.9 us
+| ![](./imp_result/dist_acc_blk_dgm.png) |  |
+* Time requirement of 4 kernels: (15844+15811+15907+15795+15852+16384+16066+15930+15916+15967)/10 = 15947.2 is
 
 ## Analysis of Mapper/Router
 * 4-kernels, 4-parallelism

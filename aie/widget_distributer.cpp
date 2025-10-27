@@ -1,3 +1,4 @@
+#include "kernel.h"
 #include <adf.h>
 #include <aie_api/aie.hpp>
 
@@ -68,33 +69,13 @@ void widget_distributer_level0(input_stream<cfloat> *in,
 //   }
 // }
 
-void wdt_dist_io_strm_lv2(input_stream<cfloat> *mv_in,
-                          output_stream<cfloat> *d_out0,
-                          output_stream<cfloat> *d_out1) {
-  for (int i = 0; i < 2048; i++) {
-    writeincr(d_out0, readincr(mv_in));
+template <unsigned int N_BATCH_MOVE>
+void wdt_dist_io_strm(input_stream<cfloat> *in, output_stream<cfloat> *out0,
+                      output_stream<cfloat> *out1) {
+  for (int i = 0; i < FFT_SIZE * N_BATCH_FFT; i++) {
+    writeincr(out1, readincr(in));
   }
-  for (int i = 0; i < 2048; i++) {
-    writeincr(d_out1, readincr(mv_in));
-  }
-}
-void wdt_dist_io_strm_lv1(input_stream<cfloat> *mv_in,
-                          output_stream<cfloat> *mv_out,
-                          output_stream<cfloat> *d_out) {
-  for (int i = 0; i < 2048; i++) {
-    writeincr(d_out, readincr(mv_in));
-  }
-  for (int i = 0; i < 4096; i++) {
-    writeincr(mv_out, readincr(mv_in));
-  }
-}
-void wdt_dist_io_strm_lv0(input_stream<cfloat> *mv_in,
-                          output_stream<cfloat> *mv_out,
-                          output_stream<cfloat> *d_out) {
-  for (int i = 0; i < 2048; i++) {
-    writeincr(d_out, readincr(mv_in));
-  }
-  for (int i = 0; i < 6144; i++) {
-    writeincr(mv_out, readincr(mv_in));
+  for (int i = 0; i < FFT_SIZE * N_BATCH_FFT * N_BATCH_MOVE; i++) {
+    writeincr(out0, readincr(in));
   }
 }
