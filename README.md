@@ -30,4 +30,33 @@ make package
 * Time requirement of 2 kernels: (30699+27543+30708+30437+29609+29585+30782+27020+27162+25551)/10 = 28909.6 us
 * Time requirement of 4 kernels: (18104+18672+16816+18693+17410+16946+16979+17149+18699+18923)=17839.1 us
 
-
+## Analysis of Mapper/Router
+* 4-kernels, 4-parallelism
+### Auto-Routing
+![](./imp_result/mp_rt_analysis/four_paral_auto.png)
+### Routing with Constraint
+* 33 min for routing
+* `aie_constraints.json`
+```json
+{
+    "GlobalConstraints": {
+        "areaGroup": {
+            "name": "fft_graph",
+            "nodeGroup": [
+                "fft_graph.*"
+            ],
+            "tileGroup": [
+                "(22,0):(22,7)",
+                "(23,0):(23,7)",
+                "(24,0):(24,7)",
+                "(25,0):(25,7)",
+                "(26,0):(26,7)",
+                "(27,0):(27,7)",
+                "(28,0):(28,7)",
+                "(29,0):(29,7)"
+            ]
+        }
+    }
+}
+```
+![](./imp_result/mp_rt_analysis/four_paral_with_constraint.png)
