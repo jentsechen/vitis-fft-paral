@@ -45,3 +45,56 @@ void widget_distributer_level0(input_stream<cfloat> *in,
 //     ptr3[i] = readincr(in);
 //   }
 // }
+
+// void wgt_dist_lv1(input_stream<cfloat> *mv_in0, input_stream<cfloat> *mv_in1,
+//                   output_cascade<cfloat> *data_out) {
+//   for (int i = 0; i < 1024; i++) {
+//     writeincr(data_out, readincr(mv_in0));
+//     writeincr(data_out, readincr(mv_in1));
+//   }
+// }
+
+// void wgt_dist_lv0(input_stream<cfloat> *mv_in0, input_stream<cfloat> *mv_in1,
+//                   output_stream<cfloat> *mv_out0,
+//                   output_stream<cfloat> *mv_out1,
+//                   output_cascade<cfloat> *data_out) {
+//   for (int i = 0; i < 1024; i++) {
+//     writeincr(data_out, readincr(mv_in0));
+//     writeincr(data_out, readincr(mv_in1));
+//   }
+//   for (int i = 0; i < 1024; i++) {
+//     writeincr(mv_out0, readincr(mv_in0));
+//     writeincr(mv_out1, readincr(mv_in1));
+//   }
+// }
+
+void wdt_dist_io_strm_lv2(input_stream<cfloat> *mv_in,
+                          output_stream<cfloat> *d_out0,
+                          output_stream<cfloat> *d_out1) {
+  for (int i = 0; i < 2048; i++) {
+    writeincr(d_out0, readincr(mv_in));
+  }
+  for (int i = 0; i < 2048; i++) {
+    writeincr(d_out1, readincr(mv_in));
+  }
+}
+void wdt_dist_io_strm_lv1(input_stream<cfloat> *mv_in,
+                          output_stream<cfloat> *mv_out,
+                          output_stream<cfloat> *d_out) {
+  for (int i = 0; i < 2048; i++) {
+    writeincr(d_out, readincr(mv_in));
+  }
+  for (int i = 0; i < 4096; i++) {
+    writeincr(mv_out, readincr(mv_in));
+  }
+}
+void wdt_dist_io_strm_lv0(input_stream<cfloat> *mv_in,
+                          output_stream<cfloat> *mv_out,
+                          output_stream<cfloat> *d_out) {
+  for (int i = 0; i < 2048; i++) {
+    writeincr(d_out, readincr(mv_in));
+  }
+  for (int i = 0; i < 6144; i++) {
+    writeincr(mv_out, readincr(mv_in));
+  }
+}

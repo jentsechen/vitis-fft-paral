@@ -26,11 +26,13 @@ private:
   adf::kernel collector_kernel_0, collector_kernel_1_0, collector_kernel_1_1;
 
 public:
-  adf::input_plio fft_in;
-  adf::output_plio fft_out;
+  //   adf::input_plio fft_in;
+  //   adf::output_plio fft_out;
+  adf::port<adf::input> fft_in;
+  adf::port<adf::output> fft_out;
   FftDistWindowGraph() {
-    fft_in = input_plio::create("fft_in", adf::plio_64_bits);
-    fft_out = output_plio::create("fft_out", adf::plio_64_bits);
+    // fft_in = input_plio::create("fft_in", adf::plio_64_bits);
+    // fft_out = output_plio::create("fft_out", adf::plio_64_bits);
 
     distributer_kernel_0 = adf::kernel::create(widget_distributer_level0);
     source(distributer_kernel_0) = "./widget_distributer.cpp";
@@ -52,7 +54,19 @@ public:
     source(collector_kernel_1_1) = "./widget_collector.cpp";
     runtime<ratio>(collector_kernel_1_1) = 0.8;
 
-    adf::connect<>(fft_in.out[0], distributer_kernel_0.in[0]);
+    // adf::connect<>(fft_in.out[0], distributer_kernel_0.in[0]);
+    // adf::connect<>(distributer_kernel_0.out[0], distributer_kernel_1_0.in[0]);
+    // adf::connect<>(distributer_kernel_0.out[1], distributer_kernel_1_1.in[0]);
+    // for (int i = 0; i < 2; i++) {
+    //   adf::connect<>(distributer_kernel_1_0.out[i], fft_kernel[i].in[0]);
+    //   adf::connect<>(fft_kernel[i].out[0], collector_kernel_1_0.in[i]);
+    //   adf::connect<>(distributer_kernel_1_1.out[i], fft_kernel[i + 2].in[0]);
+    //   adf::connect<>(fft_kernel[i + 2].out[0], collector_kernel_1_1.in[i]);
+    // }
+    // adf::connect<>(collector_kernel_1_0.out[0], collector_kernel_0.in[0]);
+    // adf::connect<>(collector_kernel_1_1.out[0], collector_kernel_0.in[1]);
+    // adf::connect<>(collector_kernel_0.out[0], fft_out.in[0]);
+    adf::connect<>(fft_in, distributer_kernel_0.in[0]);
     adf::connect<>(distributer_kernel_0.out[0], distributer_kernel_1_0.in[0]);
     adf::connect<>(distributer_kernel_0.out[1], distributer_kernel_1_1.in[0]);
     for (int i = 0; i < 2; i++) {
@@ -63,7 +77,7 @@ public:
     }
     adf::connect<>(collector_kernel_1_0.out[0], collector_kernel_0.in[0]);
     adf::connect<>(collector_kernel_1_1.out[0], collector_kernel_0.in[1]);
-    adf::connect<>(collector_kernel_0.out[0], fft_out.in[0]);
+    adf::connect<>(collector_kernel_0.out[0], fft_out);
   }
 };
 

@@ -1,6 +1,7 @@
 #ifndef __kernel__
 #define __kernel__
 #include <adf.h>
+#include <aie_api/aie.hpp>
 
 void widget_distributer(input_stream<cfloat> *in, output_stream<cfloat> *out0,
                         output_stream<cfloat> *out1);
@@ -26,5 +27,40 @@ void widget_collector_level0(input_stream<cfloat> *in0,
 //     adf::input_buffer<cfloat, adf::extents<2048>> &__restrict in2,
 //     adf::input_buffer<cfloat, adf::extents<2048>> &__restrict in3,
 //     output_stream<cfloat> *__restrict out);
+
+// void wgt_dist_lv1(input_stream<cfloat> *mv_in0, input_stream<cfloat> *mv_in1,
+//                   output_cascade<cfloat> *data_out);
+// void wgt_dist_lv0(input_stream<cfloat> *mv_in0, input_stream<cfloat> *mv_in1,
+//                   output_stream<cfloat> *mv_out0,
+//                   output_stream<cfloat> *mv_out1,
+//                   output_cascade<cfloat> *data_out);
+
+// void wgt_coll_lv1(input_cascade<cfloat> *data_in,
+//                   output_stream<cfloat> *mv_out0,
+//                   output_stream<cfloat> *mv_out1);
+// void wgt_coll_lv0(input_stream<cfloat> *mv_in0, input_stream<cfloat> *mv_in1,
+//                   input_cascade<cfloat> *data_in,
+//                   output_stream<cfloat> *mv_out0,
+//                   output_stream<cfloat> *mv_out1);
+
+void wdt_dist_io_strm_lv2(input_stream<cfloat> *mv_in,
+                          output_stream<cfloat> *d_out0,
+                          output_stream<cfloat> *d_out1);
+void wdt_dist_io_strm_lv1(input_stream<cfloat> *mv_in,
+                          output_stream<cfloat> *mv_out,
+                          output_stream<cfloat> *d_out);
+void wdt_dist_io_strm_lv0(input_stream<cfloat> *mv_in,
+                          output_stream<cfloat> *mv_out,
+                          output_stream<cfloat> *d_out);
+
+void wdt_coll_io_strm_lv2(input_stream<cfloat> *d_in0,
+                          input_stream<cfloat> *d_in1,
+                          output_stream<cfloat> *mv_out);
+void wdt_coll_io_strm_lv1(input_stream<cfloat> *mv_in,
+                          input_stream<cfloat> *d_in,
+                          output_stream<cfloat> *mv_out);
+void wdt_coll_io_strm_lv0(input_stream<cfloat> *mv_in,
+                          input_stream<cfloat> *d_in,
+                          output_stream<cfloat> *mv_out);
 
 #endif

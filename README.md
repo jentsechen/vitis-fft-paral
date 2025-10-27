@@ -28,7 +28,15 @@ make package
 | ![](./imp_result/dist_analysis/graph_2_kn.png) | ![](./imp_result/dist_analysis/graph_4_kn.png) |
 | ![](./imp_result/dist_analysis/array_2_kn.png) | ![](./imp_result/dist_analysis/array_4_kn.png) |
 * Time requirement of 2 kernels: (30699+27543+30708+30437+29609+29585+30782+27020+27162+25551)/10 = 28909.6 us
-* Time requirement of 4 kernels: (18104+18672+16816+18693+17410+16946+16979+17149+18699+18923)=17839.1 us
+* Time requirement of 4 kernels: (18104+18672+16816+18693+17410+16946+16979+17149+18699+18923)/10 = 17839.1 us
+
+| 4 kernels |  |
+| :---: | :---: |
+| Time requirement: 17007 us | Time requirement:  us |
+| ![](./imp_result/dist_analysis/aie_util_4_kn_acc.png) |  |
+| ![](./imp_result/dist_analysis/graph_4_kn_acc.png) |  |
+| ![](./imp_result/dist_analysis/array_4_kn_acc.png) |  |
+* Time requirement of 4 kernels: (17712+17610+17870+17064+16587+16644+16618+16605+16633+16726)/10 = 17006.9 us
 
 ## Analysis of Mapper/Router
 * 4-kernels, 4-parallelism
