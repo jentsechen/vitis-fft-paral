@@ -41,10 +41,10 @@ make package
 * Time requirement of 8 kernels: (13118+13186+13100+13131+13126+13126+13145+13089+13073+13067)/10 = 13116.1 us
 
 ## Analysis of Mapper/Router
-* 4-kernels, 4-parallelism
-### Auto-Routing
+### 4-kernels, 4-parallelism
+#### Auto-Routing
 ![](./imp_result/mp_rt_analysis/four_paral_auto.png)
-### Routing with Constraint
+#### Routing with Constraint
 * 33 min for routing
 * `aie_constraints.json`
 ```json
@@ -70,3 +70,16 @@ make package
 }
 ```
 ![](./imp_result/mp_rt_analysis/four_paral_with_constraint.png)
+
+### 8-kernels
+| auto-routing | constraint |
+| :---: | :---: |
+| Time requirement: 13116 us | Time requirement: 13325 us |
+| ![](./imp_result/dist_analysis/aie_util_8_kn_acc.png) | ![](./imp_result/mp_rt_analysis/aie_util_8_kn_with_constraint.png) |
+| ![](./imp_result/dist_analysis/array_8_kn_acc.png) | ![](./imp_result/mp_rt_analysis/array_8_kn_with_constraint.png) |
+* Time requirement of 8 kernels with constraint: (13331+13345+13296+13339+13324+13355+13313+13319+13302+13330)/10 = 13325.4 us
+
+## Analysis of Power Consumption
+8-kernels
+![](./imp_result/power_analysis/summary_8_kn_acc.png)
+![](./imp_result/power_analysis/detail_8_kn_acc.png)

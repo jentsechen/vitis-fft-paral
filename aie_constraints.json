@@ -1,0 +1,15 @@
+{
+    "GlobalConstraints": {
+        "areaGroup": {
+            "name": "fft_graph",
+            "nodeGroup": [
+                "fft_graph.*"
+            ],
+            "tileGroup": [
+                "(25,0):(25,7)",
+                "(26,0):(26,7)",
+                "(27,0):(27,7)"
+            ]
+        }
+    }
+}

@@ -25,6 +25,8 @@ sd_card/
 *.json
 *.pdi
 
+!aie_constraints.json
+
 hls/.Xil/
 hls/mm2s/
 hls/s2mm/
