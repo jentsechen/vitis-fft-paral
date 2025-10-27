@@ -30,14 +30,15 @@ make package
 * Time requirement of 2 kernels: (30699+27543+30708+30437+29609+29585+30782+27020+27162+25551)/10 = 28909.6 us
 * Time requirement of 4 kernels: (18104+18672+16816+18693+17410+16946+16979+17149+18699+18923)/10 = 17839.1 us
 
-| 4 kernels |  |
+| 4 kernels | 8 kernels |
 | :---: | :---: |
-| Time requirement: 15947 us | Time requirement:  us |
-| ![](./imp_result/dist_analysis/aie_util_4_kn_acc.png) |  |
-| ![](./imp_result/dist_analysis/graph_4_kn_acc.png) |  |
-| ![](./imp_result/dist_analysis/array_4_kn_acc.png) |  |
+| Time requirement: 15947 us | Time requirement: 13116 us |
+| ![](./imp_result/dist_analysis/aie_util_4_kn_acc.png) | ![](./imp_result/dist_analysis/aie_util_8_kn_acc.png) |
+| ![](./imp_result/dist_analysis/graph_4_kn_acc.png) | ![](./imp_result/dist_analysis/graph_8_kn_acc.png) |
+| ![](./imp_result/dist_analysis/array_4_kn_acc.png) | ![](./imp_result/dist_analysis/array_8_kn_acc.png) |
 | ![](./imp_result/dist_acc_blk_dgm.png) |  |
-* Time requirement of 4 kernels: (15844+15811+15907+15795+15852+16384+16066+15930+15916+15967)/10 = 15947.2 is
+* Time requirement of 4 kernels: (15844+15811+15907+15795+15852+16384+16066+15930+15916+15967)/10 = 15947.2 us
+* Time requirement of 8 kernels: (13118+13186+13100+13131+13126+13126+13145+13089+13073+13067)/10 = 13116.1 us
 
 ## Analysis of Mapper/Router
 * 4-kernels, 4-parallelism

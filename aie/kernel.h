@@ -3,9 +3,7 @@
 #include <adf.h>
 #include <aie_api/aie.hpp>
 #include <aie_api/aie_adf.hpp>
-
-#define FFT_SIZE 1024
-#define N_BATCH_FFT 2
+#include "par.h"
 
 void widget_distributer(input_stream<cfloat> *in, output_stream<cfloat> *out0,
                         output_stream<cfloat> *out1);

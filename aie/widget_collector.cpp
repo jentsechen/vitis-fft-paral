@@ -1,4 +1,4 @@
-#include "kernel.h"
+#include "par.h"
 #include <adf.h>
 #include <aie_api/aie.hpp>
 

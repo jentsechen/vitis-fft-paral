@@ -2,7 +2,7 @@
 #include <ap_int.h>
 #include <hls_stream.h>
 #define SAMPLE_BIT_WIDTH 64
-#define FFT_SIZE 1024 * 8
+#define FFT_SIZE 1024 * 16
 #define N_PARAL 1
 
 extern "C" {
