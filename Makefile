@@ -46,8 +46,10 @@ hls: hls/*
 
 ${XSA}: ${MM2S} ${S2MM} ${LIBADF} ${SYS_CFG} 
 	v++ -g -l --platform ${PLATFORM} ${MM2S} ${S2MM} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
+# ${XSA}: ${LIBADF} ${SYS_CFG} 
+# 	v++ -g -l --platform ${PLATFORM} ${LIBADF} -t ${TARGET} ${VPP_FLAGS} -o $@
 
-${HOST}: ${GRAPH} ./Work/ps/c_rts/aie_control_xrt.cpp ./host/host.cpp
+${HOST}: ${GRAPH} ./Work/ps/c_rts/aie_control_xrt.cpp ./host/host.cpp ./host/test_1_paral.cpp
 	$(MAKE) -C host/
 
 package_${TARGET}: ${LIBADF} ${XSA} ${HOST} 

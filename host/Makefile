@@ -1,6 +1,8 @@
 HOST_EXE     = ../host.exe
 HOST_OBJ   = aie_control_xrt.o host.o test_1_paral.o
+# HOST_OBJ   = aie_control_xrt.o host.o test_1_paral_gmio.o
 # HOST_OBJ   = aie_control_xrt.o host.o test_2_paral.o
+# HOST_OBJ   = aie_control_xrt.o host.o test_4_paral.o
 AIE_CTRL_CPP = ../Work/ps/c_rts/aie_control_xrt.cpp
 
 CXXFLAGS += -std=c++17 -I${XILINX_VIVADO}/include/ -I${SDKTARGETSYSROOT}/usr/include/xrt/ -O0 -g -Wall -c -fmessage-length=0 --sysroot=${SDKTARGETSYSROOT} -I${XILINX_VITIS}/aietools/include ${HOST_INC}

@@ -1,6 +1,7 @@
 // #include "fft_one_paral_graph.h"
 // #include "fft_one_paral_dist_graph.h"
 #include "fft_one_paral_dist_acc_graph.h"
+// #include "fft_four_paral_multi_port_graph.h"
 // #include "fft_dist_window_graph.h"
 // #include "fft_dist_win_group_graph.h"
 // #include "fft_one_paral_stream_graph.h"
@@ -12,6 +13,7 @@ using namespace adf;
 // FftOneParalGraph fft_graph;
 // FftOneParalDistGraph fft_graph;
 FftOneParalDistAccGraph fft_graph;
+// FftFourParalMultiPortGraph fft_graph;
 // FftDistWindowGraph fft_graph;
 // FftDistWinGroupGraph fft_graph;
 // FftOneParalStreamGraph fft_graph;

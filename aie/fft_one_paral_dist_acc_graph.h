@@ -28,18 +28,26 @@ private:
 public:
   adf::input_plio fft_in;
   adf::output_plio fft_out;
+  //   adf::input_gmio fft_in;
+  //   adf::output_gmio fft_out;
   FftOneParalDistAccGraph() {
     fft_in = input_plio::create("fft_in", adf::plio_64_bits);
     fft_out = output_plio::create("fft_out", adf::plio_64_bits);
+    // fft_in = adf::input_gmio::create("fft_in", 256, 1000);
+    // fft_out = adf::output_gmio::create("fft_out", 256, 1000);
 
     // can not be parameterized
-    // wdt_dist_io_strm_kernel[0] = adf::kernel::create(wdt_dist_io_strm<3>);
-    // wdt_dist_io_strm_kernel[1] = adf::kernel::create(wdt_dist_io_strm<2>);
-    // wdt_dist_io_strm_kernel[2] = adf::kernel::create(wdt_dist_io_strm<1>);
-    // wdt_coll_io_strm_kernel[0] = adf::kernel::create(wdt_coll_io_strm<3>);
-    // wdt_coll_io_strm_kernel[1] = adf::kernel::create(wdt_coll_io_strm<2>);
-    // wdt_coll_io_strm_kernel[2] = adf::kernel::create(wdt_coll_io_strm<1>);
-
+#if N_STACK == 2
+    wdt_dist_io_strm_kernel[0] = adf::kernel::create(wdt_dist_io_strm<1>);
+    wdt_coll_io_strm_kernel[0] = adf::kernel::create(wdt_coll_io_strm<1>);
+#elif N_STACK == 4
+    wdt_dist_io_strm_kernel[0] = adf::kernel::create(wdt_dist_io_strm<3>);
+    wdt_dist_io_strm_kernel[1] = adf::kernel::create(wdt_dist_io_strm<2>);
+    wdt_dist_io_strm_kernel[2] = adf::kernel::create(wdt_dist_io_strm<1>);
+    wdt_coll_io_strm_kernel[0] = adf::kernel::create(wdt_coll_io_strm<3>);
+    wdt_coll_io_strm_kernel[1] = adf::kernel::create(wdt_coll_io_strm<2>);
+    wdt_coll_io_strm_kernel[2] = adf::kernel::create(wdt_coll_io_strm<1>);
+#elif N_STACK == 8
     wdt_dist_io_strm_kernel[0] = adf::kernel::create(wdt_dist_io_strm<7>);
     wdt_dist_io_strm_kernel[1] = adf::kernel::create(wdt_dist_io_strm<6>);
     wdt_dist_io_strm_kernel[2] = adf::kernel::create(wdt_dist_io_strm<5>);
@@ -55,6 +63,7 @@ public:
     wdt_coll_io_strm_kernel[4] = adf::kernel::create(wdt_coll_io_strm<3>);
     wdt_coll_io_strm_kernel[5] = adf::kernel::create(wdt_coll_io_strm<2>);
     wdt_coll_io_strm_kernel[6] = adf::kernel::create(wdt_coll_io_strm<1>);
+#endif
 
     for (unsigned int i = 0; i < N_STACK - 1; i++) {
       source(wdt_dist_io_strm_kernel[i]) = "./widget_distributer.cpp";
@@ -66,6 +75,7 @@ public:
     }
 
     adf::connect<>(fft_in.out[0], wdt_dist_io_strm_kernel[0].in[0]);
+#if N_STACK > 1
     for (int i = 0; i < N_STACK - 2; i++) {
       adf::connect<>(wdt_dist_io_strm_kernel[i].out[0],
                      wdt_dist_io_strm_kernel[i + 1].in[0]);
@@ -89,6 +99,7 @@ public:
     for (int i = 0; i < N_STACK - 2; i++) {
       adf::connect<>(fft_kernel[i].out[0], wdt_coll_io_strm_kernel[i].in[1]);
     }
+#endif
     adf::connect<>(wdt_coll_io_strm_kernel[0].out[0], fft_out.in[0]);
   }
 };

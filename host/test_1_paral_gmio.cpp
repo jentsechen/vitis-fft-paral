@@ -7,13 +7,13 @@ std::vector<std::complex<float>> test(xrt::device &device,
   // AIE kernels
   auto fft_graph_rhdl = xrt::graph(device, uuid, "fft_graph");
 
-  // PL kernels
-  auto mm2s = xrt::kernel(device, uuid, "mm2s:{mm2s_0}");
-  auto s2mm = xrt::kernel(device, uuid, "s2mm:{s2mm_0}");
-
   // buffers
-  auto in_buf = xrt::bo(device, block_size_in_byte, xrt::bo::flags::normal, 0);
-  auto out_buf = xrt::bo(device, block_size_in_byte, xrt::bo::flags::normal, 0);
+  auto in_buf =
+      xrt::aie::bo(device, n_iter * n_sample_per_iter * n_byte_per_sample,
+                   xrt::bo::flags::normal, 0);
+  auto out_buf =
+      xrt::aie::bo(device, n_iter * n_sample_per_iter * n_byte_per_sample,
+                   xrt::bo::flags::normal, 0);
 
   // init. input buffer
   auto *in_arr = in_buf.map<std::complex<float> *>();
@@ -23,16 +23,19 @@ std::vector<std::complex<float>> test(xrt::device &device,
   auto *out_arr = out_buf.map<std::complex<float> *>();
 
   auto start = std::chrono::high_resolution_clock::now();
-  in_buf.sync(XCL_BO_SYNC_BO_TO_DEVICE);
   for (int iter = 0; iter < n_iter / (n_stack * n_batch_fft); ++iter) {
-    auto mm2s_rhdl = mm2s(in_buf, iter);
-    auto s2mm_rhdl = s2mm(out_buf, iter);
+    in_buf.async("fft_graph.fft_in", XCL_BO_SYNC_BO_GMIO_TO_AIE,
+                 n_sample_per_iter * n_byte_per_sample * n_stack * n_batch_fft,
+                 iter * n_sample_per_iter * n_byte_per_sample * n_stack *
+                     n_batch_fft);
     fft_graph_rhdl.run(1);
-    mm2s_rhdl.wait();
-    s2mm_rhdl.wait();
     fft_graph_rhdl.wait();
+    auto out_buf_run = out_buf.async(
+        "fft_graph.fft_out", XCL_BO_SYNC_BO_AIE_TO_GMIO,
+        n_sample_per_iter * n_byte_per_sample * n_stack * n_batch_fft,
+        iter * n_sample_per_iter * n_byte_per_sample * n_stack * n_batch_fft);
+    out_buf_run.wait();
   }
-  out_buf.sync(XCL_BO_SYNC_BO_FROM_DEVICE);
   fft_graph_rhdl.end();
   auto end = std::chrono::high_resolution_clock::now();
   std::cout << "time requirement: "

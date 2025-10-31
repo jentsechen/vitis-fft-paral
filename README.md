@@ -8,6 +8,8 @@ make package
 ```
 
 ## Analysis of Parallelism
+* PLIO is used
+
 | 1-parallelism | 2-parallelism |
 | :---: | :---: |
 | Time requirement: 90265 us | Time requirement: 70527 us |
@@ -20,6 +22,7 @@ make package
 
 ## Analysis of Distribution
 * `TP_WINDOW_VSIZE`: 1024 x 2
+* PLIO is used
 
 | 2 kernels | 4 kernels |
 | :---: | :---: |
@@ -41,13 +44,15 @@ make package
 * Time requirement of 8 kernels: (13118+13186+13100+13131+13126+13126+13145+13089+13073+13067)/10 = 13116.1 us
 
 ## Analysis of Mapper/Router
-### 4-kernels, 4-parallelism
-#### Auto-Routing
-![](./imp_result/mp_rt_analysis/four_paral_auto.png)
-#### Routing with Constraint
-* 33 min for routing
-* `aie_constraints.json`
+### 8-kernels
+| auto-routing | constraint |
+| :---: | :---: |
+| Time requirement: 13116 us | Time requirement: 13325 us |
+| ![](./imp_result/dist_analysis/aie_util_8_kn_acc.png) | ![](./imp_result/mp_rt_analysis/aie_util_8_kn_with_constraint.png) |
+| ![](./imp_result/dist_analysis/array_8_kn_acc.png) | ![](./imp_result/mp_rt_analysis/array_8_kn_with_constraint.png) |
+* Time requirement of 8 kernels with constraint: (13331+13345+13296+13339+13324+13355+13313+13319+13302+13330)/10 = 13325.4 us
 ```json
+// aie_constraints.json
 {
     "GlobalConstraints": {
         "areaGroup": {
@@ -56,30 +61,49 @@ make package
                 "fft_graph.*"
             ],
             "tileGroup": [
-                "(22,0):(22,7)",
-                "(23,0):(23,7)",
-                "(24,0):(24,7)",
                 "(25,0):(25,7)",
                 "(26,0):(26,7)",
-                "(27,0):(27,7)",
-                "(28,0):(28,7)",
-                "(29,0):(29,7)"
+                "(27,0):(27,7)"
             ]
         }
     }
 }
 ```
-![](./imp_result/mp_rt_analysis/four_paral_with_constraint.png)
 
-### 8-kernels
-| auto-routing | constraint |
-| :---: | :---: |
-| Time requirement: 13116 us | Time requirement: 13325 us |
-| ![](./imp_result/dist_analysis/aie_util_8_kn_acc.png) | ![](./imp_result/mp_rt_analysis/aie_util_8_kn_with_constraint.png) |
-| ![](./imp_result/dist_analysis/array_8_kn_acc.png) | ![](./imp_result/mp_rt_analysis/array_8_kn_with_constraint.png) |
-* Time requirement of 8 kernels with constraint: (13331+13345+13296+13339+13324+13355+13313+13319+13302+13330)/10 = 13325.4 us
+## Analysis of Architecture
+|  | dist. acc. method | multi-port method |
+| :---: | :---: | :---: |
+| block diagram | ![](./imp_result/archt_analysis/dist_acc.png) | ![](./imp_result/archt_analysis/multi_port.png) |
+| main difference| 1 data mover which moves 4 data from/to DDR and AIE | 4 data movers, each moves 1 data from/to DDR and AIE |
+| benefit | 1. throughput is higher | 1. NOC can be used<br>2. AIE utilization is lower  |
+| drawback | 1. NOC can <u>not</u> be used<br>2. AIE utilization is higher | 1. throughput is slower<br>(use PL may be faster)<br>2. NOC utilization is higher |
+| time requirement for 1024 times of 1024-FFT| 15985 us | 16512 us|
+| AIE utilization| ![](./imp_result/archt_analysis/aie_util_dist_acc.png) | ![](./imp_result/archt_analysis/aie_util_multi_port.png) |
+| graph | ![](./imp_result/archt_analysis/graph_dist_acc.png) | ![](./imp_result/archt_analysis/graph_multi_port.png) |
+| array | ![](./imp_result/archt_analysis/array_dist_acc.png) | ![](./imp_result/archt_analysis/array_multi_port.png) |
+* Distrubution: (16096+15945+15962+15901+16032+15994+16012+15957+15980+15969) = 15984.8 us
+* Direct parallelism: (16458+16390+16387+16353+16679+16458+16515+16515+16886+16477)/10 = 16511.8 us
+```json
+// aie_constraints.json
+{
+    "GlobalConstraints": {
+        "areaGroup": {
+            "name": "fft_graph",
+            "nodeGroup": [
+                "fft_graph.*"
+            ],
+            "tileGroup": [
+                "(25,0):(25,7)",
+                "(26,0):(26,7)"
+            ]
+        }
+    }
+}
+```
 
 ## Analysis of Power Consumption
-8-kernels
+### 8-kernels
 ![](./imp_result/power_analysis/summary_8_kn_acc.png)
 ![](./imp_result/power_analysis/detail_8_kn_acc.png)
+### 
+* Power consumption of data mover in AIE
