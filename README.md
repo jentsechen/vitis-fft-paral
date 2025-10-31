@@ -74,10 +74,10 @@ make package
 |  | dist. acc. method | multi-port method |
 | :---: | :---: | :---: |
 | block diagram | ![](./imp_result/archt_analysis/dist_acc.png) | ![](./imp_result/archt_analysis/multi_port.png) |
-| main difference| 1 data mover which moves 4 data from/to DDR and AIE | 4 data movers, each moves 1 data from/to DDR and AIE |
+| main difference| 1. one data mover which moves<br> four data from/to DDR and AIE<br>2. streaming operation | 1. four data movers, each moves<br> one data from/to DDR and AIE<br>2. memory based operation |
 | benefit | 1. throughput is higher | 1. NOC can be used<br>2. AIE utilization is lower  |
 | drawback | 1. NOC can <u>not</u> be used<br>2. AIE utilization is higher | 1. throughput is slower<br>(use PL may be faster)<br>2. NOC utilization is higher |
-| time requirement for 1024 times of 1024-FFT| 15985 us | 16512 us|
+| time requirement for 1024 times of 1024-FFT | 15985 us | 16512 us|
 | AIE utilization| ![](./imp_result/archt_analysis/aie_util_dist_acc.png) | ![](./imp_result/archt_analysis/aie_util_multi_port.png) |
 | graph | ![](./imp_result/archt_analysis/graph_dist_acc.png) | ![](./imp_result/archt_analysis/graph_multi_port.png) |
 | array | ![](./imp_result/archt_analysis/array_dist_acc.png) | ![](./imp_result/archt_analysis/array_multi_port.png) |
@@ -107,3 +107,4 @@ make package
 ![](./imp_result/power_analysis/detail_8_kn_acc.png)
 ### 
 * Power consumption of data mover in AIE
+    * AXI stream > cascade stream > DMA
